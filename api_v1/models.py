@@ -11,15 +11,12 @@ class User(Base):
     email = Column(String, unique=True, nullable=False, index=True)
     username = Column(String, unique=True, nullable=False, index=True)
     hashed_pwd = Column(String)
-    first_name = Column(String)
-    last_name = Column(String)
     is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=False)
     is_superuser = Column(Boolean, default=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), default=func.now())
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     loginlogs = relationship("LoginLogs", cascade="all, delete", back_populates="user")
-    # profile = relationship("Profile", cascade="all, delete", uselist=False, back_populates="user")
 
     def __repr__(self):
         return f"{self.id} - {self.email}"

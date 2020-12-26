@@ -12,8 +12,6 @@ class UserLoginSchema(BaseModel):
 class UserRegistrationSchema(BaseModel):
     email: EmailStr
     password: str
-    first_name: str
-    last_name: str
     is_active: bool
     is_admin: bool
     is_superuser: bool = False
@@ -23,8 +21,6 @@ class UserRegistrationSchema(BaseModel):
 
 class UserUpdateSchema(BaseModel):
     email: EmailStr
-    first_name: str
-    last_name: str
     is_active: bool
     is_admin: bool
     is_superuser: bool
@@ -36,8 +32,6 @@ class UserSchema(BaseModel):
     id: int
     email: EmailStr
     username: str
-    first_name: str
-    last_name: str
     is_active: bool
     is_admin: bool
     created_at: datetime
