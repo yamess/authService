@@ -10,7 +10,7 @@ from api_v1.exceptions import credentials_exception,not_authorized_exception
 from api_v1.models import User
 from api_v1.schemas import UserSchema,UserLoginSchema,TokenSchema,UserRegistrationSchema
 from authbase.dependencies import get_db,authenticate_user,create_access_token,crud_create_user,get_current_user, \
-    crud_get_users,crud_delete_user,crud_update_user
+    crud_get_users,crud_delete_user,crud_update_user,is_verified
 from authbase.settings import ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter()
@@ -45,6 +45,15 @@ async def login(request: Request, db: Session = Depends(get_db)):
     access_token = create_access_token(data=data, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type": "bearer"}
 
+@router.post("/token/verify", tags=["Authentication"], status_code=status.HTTP_200_OK)
+async def verify(request: Request):
+    body = await request.json()
+    access_token = body['token']
+    res = is_verified(access_token)
+    if res:
+        return True
+    return False
+
 # Register new user
 @router.post("/users/register", response_model=UserSchema, tags=["Users"], status_code=status.HTTP_201_CREATED)
 def register_user(user_in: UserRegistrationSchema, db: Session = Depends(get_db)):
@@ -55,7 +64,7 @@ def register_user(user_in: UserRegistrationSchema, db: Session = Depends(get_db)
 async def read_me(user: User = Depends(get_current_user)):
     return user
 
-@router.get("/users", response_model=List[UserSchema], tags=["Users"], status_code=status.HTTP_200_OK)
+@router.get("/users/list", response_model=List[UserSchema], tags=["Users"], status_code=status.HTTP_200_OK)
 async def read_users(
         current_user: User = Depends(get_current_user), db: Session = Depends(get_db),
         skip: int = 0, limit: int = 100
@@ -70,14 +79,14 @@ async def read_users(
         raise credentials_exception
     return users
 
-@router.patch("/users/{user_id}", response_model=UserSchema, tags=["Users"], status_code=status.HTTP_202_ACCEPTED)
+@router.patch("/users/update/{user_id}", response_model=UserSchema, tags=["Users"], status_code=status.HTTP_202_ACCEPTED)
 async def update_user(user_id: int, data: dict, current_user: User = Depends(get_current_user), db:Session = Depends(get_db)):
     if (user_id != current_user.id) & (not current_user.is_superuser) & (not current_user.is_admin):
         raise not_authorized_exception
     user = crud_update_user(user_id=user_id, db=db, data=data)
     return user
 
-@router.delete("/users/{user_id}", tags=["Users"], status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/users/delete/{user_id}", tags=["Users"], status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(user_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     if (not current_user.is_admin) & (not current_user.is_superuser):
         raise not_authorized_exception

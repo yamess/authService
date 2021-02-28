@@ -34,32 +34,3 @@ class LoginLogs(Base):
 
     def __repr__(self):
         return str(self.loggedin_at)
-
-# class Profile(Base):
-#     __tablename__ = "profile"
-#
-#     id = Column(Integer, primary_key=True, unique=True, index=True)
-#     first_name = Column(String, nullable=False)
-#     last_name = Column(String, nullable=False)
-#     user_id = Column(Integer, ForeignKey("users.id"))
-#     date_of_birth = Column(Date, nullable=True)
-#     picture = Column(String, nullable=True)
-#     active_since = Column(Date, nullable=True)
-#     phone_number = Column(String, nullable=True)
-#     marital_status = Column(String, nullable=True)
-#
-#     address = relationship("Parent", cascade="all, delete", back_populates="address")
-#     user = relationship("User", back_populates="profile")
-#
-# class Address(Base):
-#     __tablename__ = "address"
-#
-#     id: Column(Integer, primary_key=True, unique=True, index=True)
-#     address_line_1 = Column(String, nullable=True)
-#     address_line_2 = Column(String, nullable=True)
-#     city = Column(String, nullable=False)
-#     country = Column(String, nullable=False)
-#     postal_code = Column(String, nullable=True)
-#     profile_id = Column(Integer, ForeignKey("profiles.id"))
-#
-#     profile = relationship("Profiles", back_populates="profiles")

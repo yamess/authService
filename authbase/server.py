@@ -17,7 +17,13 @@ app = FastAPI(
     docs_url="/",
 )
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=ALLOWED_HOSTS)
-app.add_middleware(CORSMiddleware, allow_origins=ALLOWED_ORIGINS)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 app.include_router(router=router, prefix="/api/v0.1")
 
 
@@ -27,10 +33,5 @@ async def add_process_time_header(request: Request, call_next):
     response = await call_next(request)
     process_time = time.time() - start_time
     response.headers["X-Process-Time"] = str(process_time)
-    print(f"request processed in {process_time}")
     return response
 
-# @app.get("/", name="Root")
-# async def root():
-#     return {"message": "This the version 1 of the api"}
-#

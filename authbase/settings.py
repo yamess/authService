@@ -29,6 +29,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"]
 
 # Middleware
 ALLOWED_ORIGINS = ["*"]
-ALLOWED_HOSTS = ["dev.localhost.com"]
+ALLOWED_HOSTS = ["*"]
 
 DEBUG = os.environ["DEBUG"]
